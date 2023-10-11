@@ -1,20 +1,22 @@
-const loadPhone = async (searchTxt) => {
+const loadPhone = async (searchTxt,isShowAll) => {
     const response = await fetch(`https://openapi.programming-hero.com/api/phones?search=${searchTxt}`);
     const data = await response.json();
     const phones = data.data;
-    displayPhones(phones);
+    displayPhones(phones,isShowAll);
 }
 
-const displayPhones = phones => {
+const displayPhones = (phones,isShowAll) => {
     const phoneContainer = document.getElementById('phone-container');
     phoneContainer.textContent = '';
     const showAllContainer = document.getElementById('show-all-container');
-    if(phones.length > 9){
+    if(phones.length > 9 && !isShowAll){
         showAllContainer.classList.remove('hidden');
     }else{
         showAllContainer.classList.add('hidden');
     }
-    phones = phones.slice(0,9);
+    if(!isShowAll){
+        phones = phones.slice(0,9);
+    }
     phones.forEach(phone => {
         console.log(phone);
         const phoneCard = document.createElement('div');
@@ -25,7 +27,7 @@ const displayPhones = phones => {
             <h2 class="card-title">${phone.phone_name}</h2>
             <p>If a dog chews shoes whose shoes does he choose?</p>
             <div class="card-actions justify-end">
-                <button class="btn btn-primary">Buy Now</button>
+                <button onclick="handleShowDetail('${phone.slug}');" class="btn btn-primary">Show Details</button>
             </div>
             </div>
         `;
@@ -34,11 +36,37 @@ const displayPhones = phones => {
     toggleLoadingSpinner(false);
 }
 
-const handleSearch = () =>{
+const handleShowDetail = async (id) =>{
+    const response = await fetch(`https://openapi.programming-hero.com/api/phone/${id}`);
+    const data = await response.json();
+    const phone = data.data;
+    showPhoneDetails(phone);
+}
+
+const showPhoneDetails = (phone) =>{
+    const phoneName = document.getElementById('phone-name');
+    phoneName.innerText = phone.name;
+
+    const showDetailContainer = document.getElementById('show-detail-container');
+    showDetailContainer.innerHTML = `
+        <img src="${phone.image}" alt="" />
+        <p>
+            <span>Storage:</span>
+            ${phone?.mainFeatures?.storage}
+        </p>
+        <p>
+            <span>GPS:</span>
+            ${phone?.others?.GPS}
+        </p>
+    `;
+    show_details_modal.showModal();
+}
+
+const handleSearch = (isShowAll) =>{
     toggleLoadingSpinner(true);
     const searchField = document.getElementById('search-field');
     const searchText = searchField.value;
-    loadPhone(searchText);
+    loadPhone(searchText,isShowAll);
     searchField.value = '';
 }
 
@@ -49,4 +77,8 @@ const toggleLoadingSpinner = (isLoading) =>{
     }else{
         loadingSpinner.classList.add('hidden');
     }
+}
+
+const handleShowAll = () =>{
+    handleSearch(true);
 }
