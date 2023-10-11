@@ -18,7 +18,6 @@ const displayPhones = (phones,isShowAll) => {
         phones = phones.slice(0,9);
     }
     phones.forEach(phone => {
-        console.log(phone);
         const phoneCard = document.createElement('div');
         phoneCard.classList = 'card p-4 bg-teal-50 shadow-xl';
         phoneCard.innerHTML = `
@@ -56,7 +55,7 @@ const showPhoneDetails = (phone) =>{
         </p>
         <p>
             <span>GPS:</span>
-            ${phone?.others?.GPS}
+            ${phone?.others?.GPS || 'No GPS'}
         </p>
     `;
     show_details_modal.showModal();
