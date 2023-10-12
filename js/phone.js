@@ -57,6 +57,10 @@ const showPhoneDetails = (phone) =>{
             <span>GPS:</span>
             ${phone?.others?.GPS || 'No GPS'}
         </p>
+        <p>
+            <span>GPS:</span>
+            ${phone.others?.GPS ? phone.others.GPS : 'No GPS'}
+        </p>
     `;
     show_details_modal.showModal();
 }
@@ -66,7 +70,6 @@ const handleSearch = (isShowAll) =>{
     const searchField = document.getElementById('search-field');
     const searchText = searchField.value;
     loadPhone(searchText,isShowAll);
-    searchField.value = '';
 }
 
 const toggleLoadingSpinner = (isLoading) =>{
